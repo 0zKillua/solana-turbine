@@ -143,6 +143,7 @@ def svg(stage):
 <text x="500" y="935" text-anchor="middle" font-family="Menlo, monospace" font-size="20" fill="#8a90b0" letter-spacing="3">TURBIN3 WEEK 1 · MPL CORE · SOLANA</text>
 </svg>'''
 
-for stage in STAGES:
-    with open(os.path.join(OUT, f"{stage}.svg"), "w") as f:
-        f.write(svg(stage))
+if __name__ == "__main__":
+    for stage in STAGES:
+        with open(os.path.join(OUT, f"{stage}.svg"), "w") as f:
+            f.write(svg(stage))

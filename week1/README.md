@@ -14,6 +14,8 @@ The NFT is a dino that grows up across these steps. It is minted as an egg, the 
 | :------------------------: | :------------------------------------: | :-------------------------: | :------------------------------: |
 | ![egg](assets/nft/egg.png) | ![hatchling](assets/nft/hatchling.png) | ![rex](assets/nft/rex.png)  | ![fossil](assets/nft/fossil.png) |
 
+Write-up: [I raised a dino on Solana](ARTICLE.md)
+
 ## Devnet proof
 
 Every script records what it created in [`deployments/devnet.json`](deployments/devnet.json).
