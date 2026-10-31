@@ -1,0 +1,5 @@
+node_modules
+.env
+# Keypairs are secrets. Never commit them.
+wallets/*.json
+.DS_Store

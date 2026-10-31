@@ -1,0 +1,33 @@
+{
+  "spl": {
+    "mint": "CQYY5qbrL9Yq1i5pjNUaFKh2wtHE9oVD18dUosE4FRJz",
+    "decimals": 6,
+    "createMintTx": "7WXhMKKW9YHSoKDafxftJb8EBwtcrkd262YrJy2NcBjwV9fnqLRnp4Pw46chSz1F9jLxXDx3urp5Qf9HQk7nLV2",
+    "mintToTx": "2QX4z58CZr3akyMoW7zEQCDqbzYirKdfw2pMJhpgkDwiTxfxnV65EVHe6GxFSXNVB8CJiwZFRP2FX12gGgstdEyo",
+    "transferTx": "2A3jap5YETmsNJiiULTokD4wXTxiuqd2FnbJ2tTg2DozVkgbdceaBbZHzMApPYqipqmNJEp9t4DEYYtZNkcjpMcp"
+  },
+  "nft": {
+    "metadata": {
+      "egg": {
+        "image": "https://gateway.irys.xyz/77eDZpPxynoQDdPQEfjRMTHAdsXDf9Kc5xLyXst9VWeB",
+        "uri": "https://gateway.irys.xyz/2NpSH6vea3gjABLEcAFjcA2EHgqmSg4F69s9wmiTziu8"
+      },
+      "hatchling": {
+        "image": "https://gateway.irys.xyz/6Ebg6U5tm2mjr3yjiXNP5fkXMiGuYm76zQTnHndno8AB",
+        "uri": "https://gateway.irys.xyz/rGDepAAqrEbr2o8As2uy5rEX1udu65ymvycVh2pzVYC"
+      },
+      "rex": {
+        "image": "https://gateway.irys.xyz/86CvnPphC9thWpFsUkauv1usd4bXan2GCRBSdm5e29kE",
+        "uri": "https://gateway.irys.xyz/CX8QT2ufZtb2tfi2AS8z4guXX9MfkCAJpqx64KrXgToi"
+      }
+    },
+    "asset": "7p6rjKjcjFX57ZydXheEknfsuzpwjHwWGnQjM7gh6noh",
+    "createTx": "4hsND9t6RUCUwAfvxW8wcNCLxpqKReAhx2B8AcXKwBJV2TRraXdpfv5McroXbXuUuL5UEfGzZTDfbxmnk1g77WMv",
+    "updateTxs": {
+      "hatchling": "ToHyKuycfYuQ9f9swpTGTUpc4a2V63iaC51YjJmQoRAxL5ohBkz8N2nupHXG5tDkouVMr2agD1AEQRwAzPSgsyc",
+      "rex": "9jetDDzJUbfzEFVLNh47CUUz9PPzAxnQPoaTNrVye7HPczui7ZPLuz61HszNEmmXfZ3ApaHj4seV9sv8REfYTRS"
+    },
+    "transferTx": "2ZE1X1UCqGN6P7ao3HGhV9mqUWxMpirsHjhoCarjjBfmmfwLChvNcaf19eV58Jj6578j1sqtv1tqhaQy6yuPhDMs",
+    "burnTx": "2oP1jGy9XBUDPzxJgyyVB8W5NU55rfRrfe9GZyqYmxLLvRnVt1tMN8jFBa89RgLeRAX2DEfi3u3HocANXix6nekP"
+  }
+}

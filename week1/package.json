@@ -1,0 +1,39 @@
+{
+  "name": "turbine-week1-spl-nft",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turbine Week 1: mint and transfer an SPL token; create, update, transfer and burn an MPL Core NFT",
+  "type": "module",
+  "packageManager": "pnpm@11.18.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "wallets": "tsx src/wallets.ts",
+    "spl:create-mint": "tsx src/spl/1-create-mint.ts",
+    "spl:mint": "tsx src/spl/2-mint-to.ts",
+    "spl:transfer": "tsx src/spl/3-transfer.ts",
+    "nft:upload": "tsx src/nft/1-upload-metadata.ts",
+    "nft:create": "tsx src/nft/2-create.ts",
+    "nft:update": "tsx src/nft/3-update.ts",
+    "nft:transfer": "tsx src/nft/4-transfer.ts",
+    "nft:burn": "tsx src/nft/5-burn.ts",
+    "typecheck": "tsc",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@metaplex-foundation/mpl-core": "^1.10.0",
+    "@metaplex-foundation/umi": "^1.6.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.6.0",
+    "@metaplex-foundation/umi-uploader-irys": "^1.6.0",
+    "@solana-program/system": "^0.16.0",
+    "@solana-program/token": "^0.18.0",
+    "@solana/kit": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

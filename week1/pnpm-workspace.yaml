@@ -1,0 +1,8 @@
+# Native addons are optional speedups with pure-JS fallbacks; only esbuild (used by tsx) needs its install script.
+allowBuilds:
+  esbuild: true
+  bigint-buffer: false
+  bufferutil: false
+  keccak: false
+  secp256k1: false
+  utf-8-validate: false
