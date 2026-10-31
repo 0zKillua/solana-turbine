@@ -1,6 +1,6 @@
 # Week 1: SPL Token and MPL Core NFT
 
-Turbin3 Builders cohort, week 1. TypeScript scripts that:
+TS scripts that:
 
 1. Create an SPL token, mint it, and transfer it to another wallet.
 2. Mint an NFT with Metaplex Core.
@@ -45,73 +45,45 @@ Every script records what it created in [`deployments/devnet.json`](deployments/
 
 ## How it works
 
-### SPL token (`@solana/kit` + `@solana-program/token`)
+**SPL token**
 
-- **The mint is an account.** [`1-create-mint.ts`](src/spl/1-create-mint.ts) sends two instructions in one transaction. The System Program's `createAccount` allocates 82 bytes, pays rent and assigns the account to the Token Program. Then `initializeMint2` writes the decimals and the mint authority into it. The new mint keypair signs `createAccount`, which proves no one else already holds that address. There is no freeze authority, so nobody can freeze holders' tokens.
-- **Wallets don't hold tokens; token accounts do.** Each (owner, mint) pair has one standard token account, the Associated Token Account. It is a PDA, so anyone can derive it from the owner and the mint. [`2-mint-to.ts`](src/spl/2-mint-to.ts) creates it with the idempotent instruction, which succeeds even if the account already exists, then mints into it.
-- **Amounts are integers.** With 6 decimals, 1 token is stored as `1_000_000`. [`amount.ts`](src/lib/amount.ts) converts between the two using strings, without floats. The scripts use `mintToChecked` and `transferChecked`, which also pass the decimals, so the program rejects a call made with the wrong decimals.
-- **The sender pays for the receiver's account.** [`3-transfer.ts`](src/spl/3-transfer.ts) creates the recipient's token account if it is missing. The authority pays its rent, and the recipient never signs.
+- A mint is an account holding supply, decimals and the mint authority.
+- Wallets don't hold tokens. Each wallet gets an Associated Token Account per mint.
+- Amounts are integers: with 6 decimals, 1 token is `1_000_000`.
 
-### Core NFT (`@metaplex-foundation/mpl-core` on Umi)
+**Core NFT**
 
-- **One account per NFT.** A Core asset stores its owner, update authority, name and URI in a single account. A Token Metadata NFT needs a mint, a token account, a metadata account and a master edition. The image, description and traits live in a JSON file at the URI. [`1-upload-metadata.ts`](src/nft/1-upload-metadata.ts) uploads the images and JSON to Arweave through Irys.
-- **Owner and update authority are separate roles.** The owner can transfer and burn the asset. The update authority can change its name and URI. After the transfer, the recipient owned the dino, but only the authority wallet could grow it into a rex. Transferring an asset does not transfer the right to edit it.
-- **A transfer is one field write.** [`4-transfer.ts`](src/nft/4-transfer.ts) rewrites the `owner` field. It creates no accounts and costs only the transaction fee.
-- **The owner burns, the payer is refunded.** [`5-burn.ts`](src/nft/5-burn.ts) is signed by the recipient as owner. The authority wallet pays the fee, so a recipient with 0 SOL can still burn.
+- One account holds the whole NFT: owner, update authority, name and URI.
+- The owner can transfer and burn. Only the update authority can edit. That's why the rex update worked while the recipient owned the dino.
+- A burn leaves a 1-byte "fossil" account, so the address can't be reused.
 
-## What the lamports showed
+## What it cost
 
-All numbers below are read from the transactions above. They are not estimates. On devnet at the time of the run, rent-exemption cost `5,080 × (128 + bytes)` lamports. That is lower than the 6,960-per-byte figure in older tutorials, so the scripts read rent from the RPC instead of hardcoding it.
+| Step     | Lamports                                                                                                      |
+| -------- | ------------------------------------------------------------------------------------------------------------- |
+| Create   | 1,463,040 rent + 1,500,000 [Core protocol fee](https://developers.metaplex.com/protocol-fees)                 |
+| Update   | Account resizes: a longer name costs rent, a shorter one refunds it                                           |
+| Transfer | Only the transaction fee                                                                                      |
+| Burn     | 812,800 rent returned to the **payer** (not the owner). The 1-byte fossil keeps its rent and the protocol fee |
 
-| Step                | Asset account balance | What happened                                                                                                                                |
-| ------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Create              | 0 → 2,963,040         | 1,463,040 rent for 160 bytes, plus **1,500,000** (0.0015 SOL), the [Core Create protocol fee](https://developers.metaplex.com/protocol-fees) |
-| Update to hatchling | +30,480               | The name and URI grew by 6 bytes in total, so the account was resized and the payer topped up 6 × 5,080 of rent                              |
-| Transfer            | unchanged             | Only the `owner` field changed                                                                                                               |
-| Update to rex       | −25,400               | The name and URI shrank by 5 bytes in total, and the payer got that rent back                                                                |
-| Burn                | 2,968,120 → 2,155,320 | **812,800 reclaimed** by the payer                                                                                                           |
+## Run it
 
-**The fossil.** A burn does not close the asset account. Core shrinks it to a 1-byte tombstone owned by the Core program, so the address can never hold an asset again. The tombstone keeps 2,155,320 lamports: 655,320 is the rent for 1 byte, and 1,500,000 is the protocol fee paid at creation. Burning reclaims everything above that, and the refund goes to the transaction's **payer**, not to the owner. The authority paid the rent at creation, so it is the one refunded here.
-
-## Running it
-
-Requires Node 22+ and pnpm. Uses the Solana CLI wallet (`~/.config/solana/id.json`) as the authority unless `.env` says otherwise; see [`.env.example`](.env.example).
+Needs Node 22+, pnpm and a funded Solana CLI wallet (`~/.config/solana/id.json`).
 
 ```bash
 pnpm install
-pnpm wallets                  # creates wallets/recipient.json, prints balances
+pnpm wallets              # creates the recipient wallet
 
-# Task 1
 pnpm spl:create-mint
-pnpm spl:mint                 # optional amount, e.g. pnpm spl:mint 500
-pnpm spl:transfer             # optional amount and recipient address
+pnpm spl:mint
+pnpm spl:transfer
 
-# Tasks 2–5
-pnpm nft:upload               # images + metadata JSON to Irys
-pnpm nft:create               # egg
+pnpm nft:upload
+pnpm nft:create
 pnpm nft:update hatchling
-pnpm nft:transfer             # optional new owner address
+pnpm nft:transfer
 pnpm nft:update rex
 pnpm nft:burn
 ```
 
-`pnpm typecheck` runs the TypeScript compiler. To redraw the art, run `python3 assets/art/draw.py`; it writes the SVGs, which are then exported to PNG.
-
-## Mainnet notes
-
-The scripts take the cluster from `CLUSTER` and never assume devnet. With `CLUSTER=mainnet-beta`, uploads go to Irys's mainnet node, where Arweave storage is permanent. On devnet, Irys storage is temporary, so the metadata links in this README will eventually stop resolving, but the on-chain transactions will not. A production client would also set a compute unit limit and a priority fee on each transaction.
-
-## Layout
-
-```
-src/
-  config.ts               token decimals and default amounts, NFT symbol
-  wallets.ts              recipient keypair + balances
-  lib/                    env, kit and Umi clients, keypair loading, amounts, deployment record
-  spl/1-3                 create mint, mint to, transfer
-  nft/1-5                 upload, create, update, transfer, burn
-  nft/metadata.ts         the three on-chain stages and their JSON
-assets/nft/               stage art (PNG + SVG)
-assets/art/draw.py        pixel-art source for the four stages
-deployments/devnet.json   addresses and signatures from the devnet run
-```
+Set `CLUSTER` in `.env` to change networks (see [`.env.example`](.env.example)).
